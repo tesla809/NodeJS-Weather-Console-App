@@ -6,11 +6,3 @@ var zipcodes = process.argv.slice(2);
 
 // allows you to pass any number of zipcodes for weather
 zipcodes.forEach(weather.get);
-
-
-/*
-you could also do.
-users.forEach(function(username){
-  profile.get(username);
-});
-*/
