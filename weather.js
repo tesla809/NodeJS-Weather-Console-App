@@ -1,7 +1,6 @@
 // Weather querying is now its own module.
 
 // can't access module unless its added in via require method
-var https = require("https");
 var http = require("http");
 
 // lets decide what weather info we want...
@@ -21,7 +20,7 @@ function get(zipcode){
   // error handling
   try {
     var apiKey = "3b4d9c15fad7b35ee0e512ead946e18c";
-    var address = "http://api.openweathermap.org/data/2.5/weather?" ;
+    var address = "http://api.openweathermap.org/data/2.5/weather?";
     address += "zip=" + zipcode;
     address += ",us&appid=" + apiKey;
 
@@ -42,7 +41,7 @@ function get(zipcode){
           try {
             // Parse the data aka string to code
             var weather = JSON.parse(body);
-            
+
             // Print the data.
             printMessage(zipcode, weather.badges.length, weather.points.JavaScript);
           } catch(error){
