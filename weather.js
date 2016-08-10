@@ -1,12 +1,13 @@
-// Moved code to profile.js and created it as a module.
+// Weather querying is now its own module.
 
 // can't access module unless its added in via require method
 var https = require("https");
 var http = require("http");
 
+// lets decide what weather info we want...
 // print out message
-function printMessage(username, badgeCount, points){
-  var message = username + " has " + badgeCount + " total badge(s) and " + points + " points in JavaScript";
+function printMessage(zipcode, badgeCount, points){
+  var message = zipcode + " has " + badgeCount + " total badge(s) and " + points + " points in JavaScript";
   console.log(message);
 }
 
@@ -15,14 +16,16 @@ function printError(error){
   console.error(error.message);
 }
 
-// error handling
-// try/catch allows you to try code and catch errors
-// throw lets you create custom errors
-// finally lets you execute code after throw or catch regardless of the result.
-
-function get(username){
+// exported method
+function get(zipcode){
+  // error handling
   try {
-    var request = https.get("https://teamtreehouse.com/" + username + ".json", function(response){
+    var apiKey = "3b4d9c15fad7b35ee0e512ead946e18c";
+    var address = "http://api.openweathermap.org/data/2.5/weather?" ;
+    address += "zip=" + zipcode;
+    address += ",us&appid=" + apiKey;
+
+    var request = http.get(address, function(response){
       // concatanate responses are we recieve them
       // b/c the internet sends out/recieves info in chunks of packets so lets merge them.
       var body = "";
@@ -38,19 +41,18 @@ function get(username){
         if(response.statusCode === 200){
           try {
             // Parse the data aka string to code
-            var profile = JSON.parse(body);
+            var weather = JSON.parse(body);
+            
             // Print the data.
-            printMessage(username, profile.badges.length, profile.points.JavaScript);
+            printMessage(zipcode, weather.badges.length, weather.points.JavaScript);
           } catch(error){
             // if parse error
             printError(error);
           }
         } else {
           // if status code error
-          // side note, constants are in uppercase letters
-          // in printError method, we access the x.message. So here we just passed our own
-          // .message
-          printError({message: "There was an error getting the profile for " + username + ". (" + http.STATUS_CODES[response.statusCode] +") "});
+          // in printError method, we access the x.message. Here we just passed our own .message
+          printError({message: "There was an error getting the weather info for " + zipcode + ". (" + http.STATUS_CODES[response.statusCode] +") "});
         }
       });
     });
@@ -60,17 +62,29 @@ function get(username){
   }
 }
 
-// for this module, we want to export the get method
-// this is needed when creating modules
-// assign exports.get to our get function
+// export our get function
 module.exports.get = get;
 
 
-// -----------_
+// -----------
 // Prepare
-// Problem: We need a simple way to look a user's badge count and Javascript points.
-// Solution: Use Node.js to connect to Treehouse's API to get profile information to print out.
+// Problem: We need a simple way get zipcode and send weather info
+// Solution: Use Node.js to connect to OpenWeatherMap API to info to print out.
 
 // Plan
-// Connect to API URL(http://teamtreehouse.com/username.json)
+// Connect to API URL(...)
+
+/*
+
+what weather info do we want?
+tempeture
+high
+low
+
+lets focus on what we want from API then fix print function.
+After that we will edit the get function to get it.
+
+We can mock up an input for the print function to make sure it works and comment out the get function.
+then we fix get function with proper API call and website.
+*/
 
