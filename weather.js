@@ -1,13 +1,48 @@
 // Weather querying is now its own module.
+/*
+future bugs to handle
+-if city entered instead of zipcode
+-cities of different names- solution ... return all cities of that name with state.
+-pick unit. soultion for now: output both c an f
+*/
 
 // can't access module unless its added in via require method
 var http = require("http");
 
 // lets decide what weather info we want...
 // print out message
-function printMessage(zipcode, badgeCount, points){
-  var message = zipcode + " has " + badgeCount + " total badge(s) and " + points + " points in JavaScript";
+function printMessage(zipcode, temperature, lowTemp, highTemp, city, country){
+  var message = "\n" + city + "," + country + "(" + zipcode + ")" + ": ";
+  message += "\nCurrent Temp: " + toCelsius(temperature) + "°C/" + toFahrenheit(temperature) + "°F";
+  message += "\n" + "High: " + toCelsius(highTemp) + "°C" + "/" + toFahrenheit(highTemp) + "°F";
+  message += "\n" + "Low:  " + toCelsius(lowTemp) + "°C" + "/" + toFahrenheit(lowTemp) + "°F";
+  message += "\n";
   console.log(message);
+}
+
+function toCelsius(temperature){
+  // round up to nearest one's place
+  temperature = (temperature + 0.5);
+  // fix equation
+  return (temperature - 273.15).toFixed(0);
+}
+
+function toFahrenheit(temperature){
+  // round up to nearest one's place
+  temperature = (temperature + 0.5);
+  // truncate to one's place
+  return (temperature * (9/5) - 459.67).toFixed(0);
+}
+
+// if they enter a city run city to zip code
+// what about cities of same name?
+function cityToZipcode(city){
+  // return zip
+}
+
+// error in case city now found
+function printNoCityError(city){
+  console.log("No city found by the name of" + city);
 }
 
 // Print out error messages
@@ -43,7 +78,7 @@ function get(zipcode){
             var weather = JSON.parse(body);
 
             // Print the data.
-            printMessage(zipcode, weather.badges.length, weather.points.JavaScript);
+            printMessage(zipcode, weather.main.temp, weather.main.temp_min, weather.main.temp_max, weather.name, weather.sys.country);
           } catch(error){
             // if parse error
             printError(error);
